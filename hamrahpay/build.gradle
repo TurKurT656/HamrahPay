@@ -1,5 +1,29 @@
 apply plugin: 'com.android.library'
 
+ext {
+    bintrayRepo = 'maven'
+    bintrayName = 'hamrah-pay'
+
+    publishedGroupId = 'ir.devage.hamrahpay'
+    libraryName = 'HamrahPay'
+    artifact = 'hamrah-pay'
+
+    libraryDescription = 'A Library For HamrahPay'
+
+    siteUrl = 'https://github.com/TurKurT656/HamrahPay'
+    gitUrl = 'https://github.com/TurKurT656/HamrahPay.git'
+
+    libraryVersion = '1.0.0'
+
+    developerId = 'TurKurT656'
+    developerName = 'Saman Sattari'
+    developerEmail = 'turkurt656@gmail.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
@@ -30,3 +54,6 @@ dependencies {
     compile 'com.android.support:support-v4:23.1.1'
     compile 'com.mcxiaoke.volley:library:1.0.19'
 }
+
+apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
+apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
