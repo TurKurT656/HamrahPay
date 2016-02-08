@@ -1,7 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
-
-group='com.github.TurKurT656'
+apply plugin: 'com.jfrog.bintray'
 
 ext {
     bintrayRepo = 'maven'
@@ -9,7 +8,7 @@ ext {
 
     publishedGroupId = 'ir.devage.hamrahpay'
     libraryName = 'HamrahPay'
-    artifact = 'hamrah-pay'
+    artifact = 'hamrahpay'
 
     libraryDescription = 'A Library For HamrahPay'
 
@@ -60,3 +59,9 @@ dependencies {
 
 apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
 apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
+
+javadoc {
+    exclude '**/internal/**'
+    options.author true
+    options.links 'http://download.oracle.com/javase/6/docs/api/'
+}
