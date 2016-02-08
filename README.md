@@ -1,6 +1,6 @@
 # کتابخانه پرداخت درون برنامه ای همراه پی
 [![Release](https://jitpack.io/v/turkurt656/hamrahpay.svg)](https://jitpack.io/#turkurt656/hamrahpay)
-[![GitHub license](http://img.shields.io/:license-mit-blue.svg?style=flat-square)](https://github.com/TurKurT656/HamrahPay/blob/master/LICENSE.md)
+[![GitHub license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/TurKurT656/HamrahPay/blob/master/LICENSE.md)
 
 کتابخانه مخصوص اندروید استودیو
 <br>
