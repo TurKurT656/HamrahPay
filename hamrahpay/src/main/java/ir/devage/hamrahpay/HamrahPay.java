@@ -202,7 +202,7 @@ public class HamrahPay {
      * @param titleColor, ActionBar Title Color
      * @return Class Instance
      */
-    public HamrahPay pageTopColor(int titleColor) {
+    public HamrahPay pageTitleColor(int titleColor) {
         this.titleColor = titleColor;
         return this;
     }
@@ -213,7 +213,7 @@ public class HamrahPay {
      * @param color, ActionBar Color
      * @return Class Instance
      */
-    public HamrahPay pageTitleColor(int color) {
+    public HamrahPay pageTopColor(int color) {
         this.color = color;
         return this;
     }
