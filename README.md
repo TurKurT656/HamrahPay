@@ -3,6 +3,8 @@
 
 کتابخانه مخصوص اندروید استودیو
 
+
+
 ---
 ## نحوه اضافه کردن کتابخانه
 برای استفاده از این کتابخانه ابتدا خط های زیر رو به قسمت زیر اضافه کنید:
@@ -12,14 +14,14 @@
 نکته: دقت کنید که دوتا از این فایل ها موجود هست و شما باید او کدهای زیر را به فایلی که در زیرشاخه برنامه هست اضافه کنید
 
 ```gradle
-  repositories {
-		...
-		maven { url "https://jitpack.io" }
-	}
-	
-	dependencies {
-    ...
-    compile 'com.github.TurKurT656:Hamrahpay:1.0.0'
+repositories {
+	...
+	maven { url "https://jitpack.io" }
+}
+
+dependencies {
+	...
+	compile 'com.github.TurKurT656:Hamrahpay:1.0.0'
 }
 ```
 ---
@@ -32,24 +34,24 @@
 ### کد ساده
 فقط با اضافه کردن این دستورات، میتوانید برنامه خود را اجرا کنید
 ```java
-  String yourSKU = "hp_56b24ebcdf274339534223";   // شناسه کالای شما در سایت همراه پی
-  new HamrahPay(MainActivity.this)                // اکتیویتی که می خواهید از آنجا پرداخت انجام شود  
-      .sku(yourSKU)                               // اضافه کردن شناسه به صفحه پرداخت
-      .listener(new HamrahPay.Listener() {        // لیسنر برای آگاهی شما از موفق بودن یا نبودن پرداخت
-          @Override
-          public void onErrorOccurred(String status, String message) {
-              // مشکلی در پرداخت روی داده است یا کاربر پرداخت را انجام نداده است
-              Toast.makeText(MainActivity.this,message,Toast.LENGTH_SHORT).show();
-              Log.e("HamrahPay", status + ": " + message);
-          }
-
-          @Override
-          public void onPaymentSucceed(String payCode) {
-              // کاربر با موفقیت پرداخت را انجام داده است
-              Log.i("HamrahPay", "payCode: " + payCode);
-          }
-      })
-      .startPayment();    // با اضافه کردن این دستور عملیات پرداخت آغاز خواهد شد
+String yourSKU = "hp_56b24ebcdf274339534223";   // شناسه کالای شما در سایت همراه پی
+new HamrahPay(MainActivity.this)                // اکتیویتی که می خواهید از آنجا پرداخت انجام شود  
+	.sku(yourSKU)                               // اضافه کردن شناسه به صفحه پرداخت
+	.listener(new HamrahPay.Listener() {        // لیسنر برای آگاهی شما از موفق بودن یا نبودن پرداخت
+	  @Override
+	  public void onErrorOccurred(String status, String message) {
+	      // مشکلی در پرداخت روی داده است یا کاربر پرداخت را انجام نداده است
+	      Toast.makeText(MainActivity.this,message,Toast.LENGTH_SHORT).show();
+	      Log.e("HamrahPay", status + ": " + message);
+	  }
+	
+	  @Override
+	  public void onPaymentSucceed(String payCode) {
+	      // کاربر با موفقیت پرداخت را انجام داده است
+	      Log.i("HamrahPay", "payCode: " + payCode);
+	  }
+	})
+	.startPayment();    // با اضافه کردن این دستور عملیات پرداخت آغاز خواهد شد
 ```
 ### پیکربندی نوع پرداخت
 دو نوع پرداخت در همراه پی پشتیبانی میگردد:
@@ -60,53 +62,53 @@
 
 برای اینکار به کد ساده کد زیر را اضافه کنید:
 ```java
-	.verificationType(HamrahPay.DEVICE_VERIFICATION)    // حالت اول
-	.verificationType(HamrahPay.EMAIL_VERIFICATION)     // حالت دوم - حالت پیشفرض
+.verificationType(HamrahPay.DEVICE_VERIFICATION)    // حالت اول
+.verificationType(HamrahPay.EMAIL_VERIFICATION)     // حالت دوم - حالت پیشفرض
 ```
 
 ### تغییر رنگ نوار بالای صفحه پرداخت
 ```java
-	.pageTopColor(Color.parseColor("#F44336"))      // رنگ نوار
-        .pageTitleColor(Color.WHITE)        		// رنگ متن روی نوار
+.pageTopColor(Color.parseColor("#F44336"))      // رنگ نوار
+.pageTitleColor(Color.WHITE)        		// رنگ متن روی نوار
 ```
 
 ### کنترل خطا
 در هنگام رویداد خطا میتوانید آنرا بصورت دستی کنترل کنید
 ```java
-	.listener(new HamrahPay.Listener() {
-	    @Override
-	    public void onErrorOccurred(String status, String message) {
-	        switch (status) {
-	            case HamrahPay.STATUS_BAD_PARAMETERS:
-	                break;
-	            case HamrahPay.STATUS_INVALID_TRANSACTION:
-	                break;
-	            case HamrahPay.STATUS_NO_NETWORK_OR_SERVER:
-	                break;
-	            case HamrahPay.STATUS_SELLER_BLOCKED:
-	                break;
-	            case HamrahPay.STATUS_TRY_AGAIN:
-	                break;
-	        }
-	        Log.e("HamrahPay", status + ": " + message);
-	    }
-	
-	    @Override
-	    public void onPaymentSucceed(String payCode) {
-	    
-	    }
-	})
+.listener(new HamrahPay.Listener() {
+    @Override
+    public void onErrorOccurred(String status, String message) {
+        switch (status) {
+            case HamrahPay.STATUS_BAD_PARAMETERS:
+                break;
+            case HamrahPay.STATUS_INVALID_TRANSACTION:
+                break;
+            case HamrahPay.STATUS_NO_NETWORK_OR_SERVER:
+                break;
+            case HamrahPay.STATUS_SELLER_BLOCKED:
+                break;
+            case HamrahPay.STATUS_TRY_AGAIN:
+                break;
+        }
+        Log.e("HamrahPay", status + ": " + message);
+    }
+
+    @Override
+    public void onPaymentSucceed(String payCode) {
+    
+    }
+})
 ```
 
 ### کتابخانه Volley
 اگر در برنامه خودتان از این کتابخانه استفاده می کنید، کافیست آنرا بصورت زیر به این کتابخانه اضافه کنید، در صورت اضافه نکردن برنامه بصورت پیش فرض برای خود صف جدیدی اضافه خواهد کرد
 ```java
-	RequestQueue myQueue = Volley.newRequestQueue(MainActivity.this)
-	new HamrahPay(MainActivity.this)
-		...
-		.requestQueue(myQueue)
-		...
-		.startPayment();
+RequestQueue myQueue = Volley.newRequestQueue(MainActivity.this)
+new HamrahPay(MainActivity.this)
+	...
+	.requestQueue(myQueue)
+	...
+	.startPayment();
 ```
 
 ---
