@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".HamrahPay$PayActivity">
+
+    <include
+        android:id="@+id/tlbr_acPay"
+        layout="@layout/app_bar" />
+
+    <WebView
+        android:id="@+id/wbvw_acPay"
+        android:layout_below="@+id/tlbr_acPay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</RelativeLayout>
+
