@@ -124,7 +124,8 @@ new HamrahPay(MainActivity.this)
 
 [![](https://hamrahpay.com/assets/home/theme/img/logo-red.png)](https://hamrahpay.com)
 
-هرگونه سوالی در مورد کتابخانه دارید در قسمت مشکلات بپرسید.
+هرگونه سوالی در مورد کتابخانه دارید در قسمت مشکلات بپرسید.<br>
+یک مثال بصورت یک برنامه اندرویدی نوشته شده است app همچنین در داخل فولدر 
 
 <a href="https://github.com/TurKurT656/HamrahPay/issues" target="_blank">
 لینک صفحه مشکلات
