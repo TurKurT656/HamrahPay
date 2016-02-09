@@ -7,9 +7,8 @@
 <br>
 <br>
 ---
-## نغییرات
+## تغییرات
  برای مشاهده تغییرات لینک زیر را باز کنید.
- 
  <a href="https://github.com/TurKurT656/HamrahPay/releases/" target="_blank">
  لیست تغییرات
  </a>
