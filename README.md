@@ -2,11 +2,10 @@
 [![Release](https://jitpack.io/v/turkurt656/hamrahpay.svg)](https://jitpack.io/#turkurt656/hamrahpay)
 [![GitHub license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/TurKurT656/HamrahPay/blob/master/LICENSE.md)
 
-کتابخانه مخصوص اندروید استودیو
+<b><i>کتابخانه مخصوص اندروید استودیو</i></b>
 <br>
 <br>
 <br>
----
 ## تغییرات
  برای مشاهده تغییرات لینک زیر را باز کنید.
  <a href="https://github.com/TurKurT656/HamrahPay/releases/" target="_blank">
