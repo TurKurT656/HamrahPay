@@ -19,10 +19,17 @@ public class SampleActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sample);
 
         Button payButton = (Button) findViewById(R.id.payButton);
+
+        final String yourSKU = "hp_56b24ebcdf274339534223";   // Your SKU
+
+        if (HamrahPay.isPremium(this,yourSKU)) {        // Check If User Have Premium Key
+            payButton.setEnabled(false);                // Disable Button
+        }
+
         payButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String yourSKU = "hp_56b24ebcdf274339534223";   // Your SKU
+
                 new HamrahPay(SampleActivity.this)
                         .sku(yourSKU)       // Set SKU
                         .verificationType(HamrahPay.DEVICE_VERIFICATION)    // You Can Use HamrahPay.EMAIL_VERIFICATION

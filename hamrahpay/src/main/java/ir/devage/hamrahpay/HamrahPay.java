@@ -12,6 +12,7 @@ import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.http.SslError;
@@ -30,6 +31,7 @@ import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkError;
@@ -274,7 +276,7 @@ public class HamrahPay {
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
                 params.put(SKU_TAG, sku);
-                params.put(DEVICE_ID_TAG, getDeviceID());
+                params.put(DEVICE_ID_TAG, getDeviceID(context));
                 params.put(EMAIL_TAG, getPrimaryEmailAddress());
                 return params;
             }
@@ -300,6 +302,7 @@ public class HamrahPay {
                             if (!jsonResponse.getBoolean(ERROR_TAG)) {
                                 if (status.equals(STATUS_SUCCESSFUL_PAYMENT)) {
                                     // Payment Was Successful
+                                    makePremium(sku);
                                     if (listener != null) {
                                         listener.onPaymentSucceed(payCode);
                                     }
@@ -334,7 +337,7 @@ public class HamrahPay {
                 params.put(PAY_CODE_TAG, payCode);
                 params.put(VERIFICATION_TYPE_TAG, getVerificationType());
                 params.put(EMAIL_TAG, getPrimaryEmailAddress());
-                params.put(DEVICE_ID_TAG, getDeviceID());
+                params.put(DEVICE_ID_TAG, getDeviceID(context));
                 params.put(DEVICE_MODEL_TAG, Build.MODEL);
                 params.put(DEVICE_MANUFACTURER_TAG, Build.MANUFACTURER);
                 params.put(SDK_VERSION_TAG, Integer.toString(Build.VERSION.SDK_INT));
@@ -352,7 +355,7 @@ public class HamrahPay {
      * In AndroidManifest.xml
      * @return Device Unique ID
      */
-    private String getDeviceID() {
+    private static String getDeviceID(Context context) {
         String deviceId;
 
         TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
@@ -394,6 +397,28 @@ public class HamrahPay {
     }
 
     /**
+     * Adds A String To Pref<br>
+     * Ex: premium_key_YOUR_SKU="User's Device ID"
+     * @param sku, Your SKU
+     */
+    private void makePremium(String sku) {
+        SharedPreferences prefs = context.getSharedPreferences("hp_premium", Context.MODE_PRIVATE);
+        prefs.edit().putString("premium_key_"+sku,getDeviceID(context)).apply();
+    }
+
+    /**
+     * An Static Method To Be Sure Of Premium State Of Selected SKU
+     * @param context, Context
+     * @param sku, SKU
+     * @return True If User Already Paid Or Paid Now
+     */
+    public static boolean isPremium(Context context,String sku) {
+        SharedPreferences prefs = context.getSharedPreferences("hp_premium", Context.MODE_PRIVATE);
+        String status = prefs.getString("premium_key_" + sku, "NOT_SET");
+        return (!status.equals("NOT_SET")) && status.equals(getDeviceID(context));
+    }
+
+    /**
      * Handles Errors Comming From Volley
      * @param error, Volley Error
      * @return Message For Volley Errors
@@ -423,6 +448,7 @@ public class HamrahPay {
 
         ProgressDialog progress;
         WebView wbvwBrowser;
+        TextView urlBar;
         static HamrahPay hamrahPay;
 
         //  Gets Properties From Outer Class
@@ -453,6 +479,12 @@ public class HamrahPay {
             progress.setCancelable(false);
 
 
+            // Initializing Url View
+            urlBar = (TextView) findViewById(R.id.txtv_acPay);
+            urlBar.setBackgroundColor(hamrahPay.getPageTopColor());
+            urlBar.setTextColor(hamrahPay.getPageTitleColor());
+
+
             // Injecting And Initializing WebView
             String payURL = PAY_PAGE + hamrahPay.getPayCode();
             wbvwBrowser = (WebView) findViewById(R.id.wbvw_acPay);
@@ -462,7 +494,7 @@ public class HamrahPay {
         }
 
         @SuppressLint("SetJavaScriptEnabled")
-        private void startWebView(String payURL) {
+        private void startWebView(final String payURL) {
             wbvwBrowser.setWebViewClient(new WebViewClient(){
 
                 @Override
@@ -478,6 +510,7 @@ public class HamrahPay {
                         return true;
                     }
                     view.loadUrl(url);
+                    urlBar.setText(url);
                     return super.shouldOverrideUrlLoading(view, url);
                 }
 
@@ -513,6 +546,7 @@ public class HamrahPay {
                     if (progress.isShowing()) {
                         progress.dismiss();
                     }
+                    urlBar.setText(url);
                     super.onPageFinished(view, url);
                     wbvwBrowser.setVisibility(View.GONE);
                     wbvwBrowser.setVisibility(View.VISIBLE);

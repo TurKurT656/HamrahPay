@@ -3,7 +3,10 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/HamrahPay.iml" filepath="$PROJECT_DIR$/HamrahPay.iml" />
+      <module fileurl="file://$PROJECT_DIR$/HamrahPay.iml" filepath="$PROJECT_DIR$/HamrahPay.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hamrahpay/hamrahpay.iml" filepath="$PROJECT_DIR$/hamrahpay/hamrahpay.iml" />
       <module fileurl="file://$PROJECT_DIR$/hamrahpay/hamrahpay.iml" filepath="$PROJECT_DIR$/hamrahpay/hamrahpay.iml" />
     </modules>
   </component>
