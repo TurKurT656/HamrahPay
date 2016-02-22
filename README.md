@@ -26,7 +26,7 @@ repositories {
 
 dependencies {
 	...
-	compile 'com.github.TurKurT656:Hamrahpay:1.1.0'
+	compile 'com.github.TurKurT656:Hamrahpay:1.2.0'
 }
 ```
 ---
