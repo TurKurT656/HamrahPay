@@ -20,7 +20,7 @@ public class SampleActivity extends AppCompatActivity {
 
         Button payButton = (Button) findViewById(R.id.payButton);
 
-        final String yourSKU = "hp_56b24ebcdf274339534223";   // Your SKU
+        final String yourSKU = "hp_5415e384f37bf802917441";   // Your SKU
 
         if (HamrahPay.isPremium(this,yourSKU)) {        // Check If User Have Premium Key
             payButton.setEnabled(false);                // Disable Button
