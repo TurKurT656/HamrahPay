@@ -6,7 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-
+import android.widget.Toast;
 import com.android.volley.toolbox.Volley;
 
 import ir.devage.hamrahpay.HamrahPay;
@@ -58,6 +58,7 @@ public class SampleActivity extends AppCompatActivity {
                             @Override
                             public void onPaymentSucceed(String payCode) {
                                 // Save Your Payment Or Do After Payment Success
+                                Toast.makeText(MainActivity.this, "پرداخت با موفقیت انجام پذیرفت", Toast.LENGTH_SHORT).show();
                                 Log.i("HamrahPay", "payCode: " + payCode);
                             }
                         })
