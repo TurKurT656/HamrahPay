@@ -33,7 +33,7 @@ public class SampleActivity extends AppCompatActivity {
                 new HamrahPay(SampleActivity.this)
                         .sku(yourSKU)       // Set SKU
                         .verificationType(HamrahPay.DEVICE_VERIFICATION)    // You Can Use HamrahPay.EMAIL_VERIFICATION
-                        .pageTopColor(Color.parseColor("#F44336"))     // ActionBar Color Of PayActivity
+                        .pageTopColor(Color.parseColor("#2ecc71"))     // ActionBar Color Of PayActivity
                         .pageTitleColor(Color.WHITE)        // ActionBar Title Color Of PayActivity
                         .requestQueue(Volley.newRequestQueue(SampleActivity.this))  // Optional Method (Use If Have A Queue)
                         .listener(new HamrahPay.Listener() {
