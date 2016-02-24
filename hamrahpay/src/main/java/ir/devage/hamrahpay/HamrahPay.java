@@ -275,9 +275,14 @@ public class HamrahPay {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
+                
+                String  email =null;
+                email = getPrimaryEmailAddress();
+                if(email!=null)
+                    params.put(EMAIL_TAG, email);
+                    
                 params.put(SKU_TAG, sku);
                 params.put(DEVICE_ID_TAG, getDeviceID(context));
-                params.put(EMAIL_TAG, getPrimaryEmailAddress());
                 return params;
             }
         };
@@ -333,10 +338,15 @@ public class HamrahPay {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
+                
+                String  email =null;
+                email = getPrimaryEmailAddress();
+                if(email!=null)
+                    params.put(EMAIL_TAG, email);
+                    
                 params.put(SKU_TAG, sku);
                 params.put(PAY_CODE_TAG, payCode);
                 params.put(VERIFICATION_TYPE_TAG, getVerificationType());
-                params.put(EMAIL_TAG, getPrimaryEmailAddress());
                 params.put(DEVICE_ID_TAG, getDeviceID(context));
                 params.put(DEVICE_MODEL_TAG, Build.MODEL);
                 params.put(DEVICE_MANUFACTURER_TAG, Build.MANUFACTURER);
