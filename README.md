@@ -26,7 +26,7 @@ repositories {
 
 dependencies {
 	...
-	compile 'com.github.TurKurT656:Hamrahpay:1.2.0'
+	compile 'com.github.hamrahpay:HamrahPay:1.3.0'
 }
 ```
 ---
@@ -38,7 +38,7 @@ dependencies {
 ### کد ساده
 فقط با اضافه کردن این دستورات، میتوانید برنامه خود را اجرا کنید
 ```java
-String yourSKU = "hp_56b24ebcdf274339534223";   // شناسه کالای شما در سایت همراه پی
+String yourSKU = "hp_5415e384f37bf802917441";   // شناسه کالای شما در سایت همراه پی
 new HamrahPay(MainActivity.this)                // اکتیویتی که می خواهید از آنجا پرداخت انجام شود  
 	.sku(yourSKU)                               // اضافه کردن شناسه به صفحه پرداخت
 	.listener(new HamrahPay.Listener() {        // لیسنر برای آگاهی شما از موفق بودن یا نبودن پرداخت
@@ -81,7 +81,7 @@ if (HamrahPay.isPremium(MainActivity.this,yourSKU)) {        // چک کردن خ
 
 ### تغییر رنگ نوار بالای صفحه پرداخت
 ```java
-.pageTopColor(Color.parseColor("#F44336"))      // رنگ نوار
+.pageTopColor(Color.parseColor("#27ae60"))      // رنگ نوار
 .pageTitleColor(Color.WHITE)        		// رنگ متن روی نوار
 ```
 
@@ -133,7 +133,7 @@ new HamrahPay(MainActivity.this)
 هرگونه سوالی در مورد کتابخانه دارید در قسمت مشکلات بپرسید.<br>
 یک مثال بصورت یک برنامه اندرویدی نوشته شده است app همچنین در داخل فولدر 
 
-<a href="https://github.com/TurKurT656/HamrahPay/issues" target="_blank">
+<a href="https://github.com/hamrahpay/HamrahPay/issues" target="_blank">
 لینک صفحه مشکلات
 </a>
 
@@ -153,3 +153,7 @@ new HamrahPay(MainActivity.this)
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
+##
+توسعه دهنده این کتابخانه
+آقای سامان ستاری ملکی
+ایمیل :  turkurt656@gmail.com
