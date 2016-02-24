@@ -24,7 +24,9 @@
         android:paddingEnd="16dp"
         android:paddingBottom="8dp"
         android:paddingTop="8dp"
-        android:text="Hello" />
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="http://" />
 
     <WebView
         android:id="@+id/wbvw_acPay"
