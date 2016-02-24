@@ -96,7 +96,7 @@ public class HamrahPay {
     private RequestQueue mRequestQueue = null;
     private Listener listener = null;
     private String payCode = null;
-    private int color = Color.parseColor("#F44336");
+    private int color = Color.parseColor("#2ecc71");
     private int titleColor = Color.WHITE;
 
     /**
