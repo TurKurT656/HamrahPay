@@ -283,6 +283,7 @@ public class HamrahPay {
                     
                 params.put(SKU_TAG, sku);
                 params.put(DEVICE_ID_TAG, getDeviceID(context));
+                params.put(VERIFICATION_TYPE_TAG, getVerificationType());
                 return params;
             }
         };
