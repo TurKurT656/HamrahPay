@@ -58,7 +58,7 @@ public class SampleActivity extends AppCompatActivity {
                             @Override
                             public void onPaymentSucceed(String payCode) {
                                 // Save Your Payment Or Do After Payment Success
-                                Toast.makeText(MainActivity.this, "پرداخت با موفقیت انجام پذیرفت", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SampleActivity.this, "پرداخت با موفقیت انجام پذیرفت", Toast.LENGTH_SHORT).show();
                                 Log.i("HamrahPay", "payCode: " + payCode);
                             }
                         })
