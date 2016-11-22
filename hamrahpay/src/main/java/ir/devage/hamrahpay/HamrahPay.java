@@ -610,12 +610,12 @@ public class HamrahPay {
                     }
                     super.onReceivedError(view, errorCode, description, failingUrl);
                 }
-
+                /*
                 @Override
                 public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
                     handler.proceed();
                 }
-
+                */
                 @Override
                 public void onPageFinished(WebView view, String url) {
                     if (progress.isShowing()) {
