@@ -103,7 +103,7 @@ public class HamrahPay {
 
     private String sku = null;
     private Context context;
-    private String verificationType = EMAIL_VERIFICATION;
+    private String verificationType = DEVICE_VERIFICATION;
     private RequestQueue mRequestQueue = null;
     private Listener listener = null;
     private String payCode = null;
