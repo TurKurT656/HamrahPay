@@ -5,14 +5,18 @@
  */
 package ir.devage.hamrahpay;
 
+import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.http.SslError;
@@ -20,9 +24,13 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,6 +40,7 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkError;
@@ -57,6 +66,8 @@ import java.util.regex.Pattern;
  * Pay Class
  */
 public class HamrahPay {
+
+    public static final int MY_PERMISSIONS_REQUEST_READ_PHONE_STATE = 100;
 
     // PHP Pages On Server Side
     private static final String PAY_REQUEST_PAGE = "https://hamrahpay.com/rest-api/pay-request";
@@ -92,11 +103,11 @@ public class HamrahPay {
 
     private String sku = null;
     private Context context;
-    private String verificationType = EMAIL_VERIFICATION;
+    private String verificationType = DEVICE_VERIFICATION;
     private RequestQueue mRequestQueue = null;
     private Listener listener = null;
     private String payCode = null;
-    private int color = Color.parseColor("#F44336");
+    private int color = Color.parseColor("#2ecc71");
     private int titleColor = Color.WHITE;
 
     /**
@@ -275,12 +286,21 @@ public class HamrahPay {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
+                
+                String  email =null;
+                email = getPrimaryEmailAddress();
+                if(email!=null)
+                    params.put(EMAIL_TAG, email);
+                    
                 params.put(SKU_TAG, sku);
                 params.put(DEVICE_ID_TAG, getDeviceID(context));
-                params.put(EMAIL_TAG, getPrimaryEmailAddress());
+                params.put(VERIFICATION_TYPE_TAG, getVerificationType());
                 return params;
             }
         };
+        if (getDeviceID(context).equals("DEVICE_ID_ERROR"))
+            Toast.makeText(context,"لطفا سطح دسترسی لازم را به برنامه بدهید و مجددا اقدام به پرداخت نمایید.",Toast.LENGTH_LONG).show();
+        else
         mRequestQueue.add(request);
     }
 
@@ -333,10 +353,15 @@ public class HamrahPay {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
+                
+                String  email =null;
+                email = getPrimaryEmailAddress();
+                if(email!=null)
+                    params.put(EMAIL_TAG, email);
+                    
                 params.put(SKU_TAG, sku);
                 params.put(PAY_CODE_TAG, payCode);
                 params.put(VERIFICATION_TYPE_TAG, getVerificationType());
-                params.put(EMAIL_TAG, getPrimaryEmailAddress());
                 params.put(DEVICE_ID_TAG, getDeviceID(context));
                 params.put(DEVICE_MODEL_TAG, Build.MODEL);
                 params.put(DEVICE_MANUFACTURER_TAG, Build.MANUFACTURER);
@@ -348,6 +373,41 @@ public class HamrahPay {
         mRequestQueue.add(request);
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    public static boolean checkPermission(final Context  context)
+    {
+        int currentAPIVersion = Build.VERSION.SDK_INT;
+        if(currentAPIVersion>=android.os.Build.VERSION_CODES.M)
+        {
+
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+
+                if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.READ_PHONE_STATE)) {
+
+                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
+                    alertBuilder.setCancelable(true);
+                    alertBuilder.setTitle("سطح دسترسی مورد نیاز");
+                    alertBuilder.setMessage("نیاز به شناسه ی دستگاه شما برای پرداخت");
+                    alertBuilder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+                        public void onClick(DialogInterface dialog, int which) {
+                            ActivityCompat.requestPermissions((Activity)context, new String[]{Manifest.permission.READ_PHONE_STATE}, MY_PERMISSIONS_REQUEST_READ_PHONE_STATE);
+                        }
+                    });
+                    AlertDialog alert = alertBuilder.create();
+                    alert.show();
+                } else {
+                    ActivityCompat.requestPermissions((Activity)context, new String[]{Manifest.permission.READ_PHONE_STATE}, MY_PERMISSIONS_REQUEST_READ_PHONE_STATE);
+                }
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return true;
+        }
+    }
+
     /**
      * Don't Forget To Set This Permissions:<br>
      * "android.permission.READ_PHONE_STATE"<br>
@@ -356,8 +416,13 @@ public class HamrahPay {
      * @return Device Unique ID
      */
     private static String getDeviceID(Context context) {
-        String deviceId;
 
+
+
+        if (checkPermission(context)) {
+
+
+        String deviceId;
         TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         deviceId = telephonyManager.getDeviceId();
 
@@ -375,6 +440,11 @@ public class HamrahPay {
         }
 
         return (deviceId != null) ? deviceId : "DEVICE_ID_ERROR";
+        }
+        else
+        {
+            return "DEVICE_ID_ERROR";
+        }
     }
 
     /**
@@ -438,6 +508,8 @@ public class HamrahPay {
     }
 
 
+
+
     //==================================================================
     //                   Pay Activity As Inner Class                  //
     //==================================================================
@@ -455,6 +527,9 @@ public class HamrahPay {
         private static void setClass(HamrahPay createdHamarahPay) {
             hamrahPay = createdHamarahPay;
         }
+
+
+        Context context;
 
         @Override
         protected void onCreate(Bundle savedInstanceState) {
@@ -535,12 +610,12 @@ public class HamrahPay {
                     }
                     super.onReceivedError(view, errorCode, description, failingUrl);
                 }
-
+                /*
                 @Override
                 public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
                     handler.proceed();
                 }
-
+                */
                 @Override
                 public void onPageFinished(WebView view, String url) {
                     if (progress.isShowing()) {
@@ -576,6 +651,23 @@ public class HamrahPay {
                     break;
             }
             return super.onOptionsItemSelected(item);
+        }
+
+
+
+        @Override
+        public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+
+            switch (requestCode) {
+                case MY_PERMISSIONS_REQUEST_READ_PHONE_STATE:
+                    if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    } else {
+//code for deny
+                    }
+                    break;
+            }
+
         }
     }
 }
