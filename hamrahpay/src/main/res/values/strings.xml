@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">HamrahPay</string>
+    <string name="pay">پرداخت</string>
+    <string name="pleaseWait">لطفا چند لحظه صبر نمایید...</string>
+    <string name="hamrahpay_faq">https://hamrahpay.com/help/faq</string>
+    <string name="tedpermission_setting">تنظیمات</string>
+    <string name="tedpermission_close">خروج</string>
+    <string name="tedpermission_confirm">تایید دسترسی</string>
+    <string name="permission_request">لطفا سطح دسترسی لازم را برای ادامه به برنامه بدهید.</string>
+    <string name="hamrahpay_pay_btn">پرداخت</string>
+    <string name="hamrahpay_help_btn">راهنمای پرداخت</string>
+    <string name="hamrahpay_support_btn">پشتیبانی و سوالات متداول</string>
+    <string name="hamrahpay_title">همراه پی</string>
+    <string name="hamrahpay_secure">صفحه ی مورد نظر دارای گواهینامه SSL معتبر و ایمن میباشد. </string>
+    <string name="security_alert">اطلاعات بانکی خود را در این صفحه وارد نکنید. اطلاعات کارت خود را فقط در صفحه ی بانک با پسوند Shaparak.ir وارد نمایید. </string>
+    <string name="shaparak_alert">شما در صفحه ی پرداخت بانک میباشید، آیا مطمئن هستید که میخواهید در حین عملیات صفحه ی پرداخت را ترک نمایید ؟</string>
+<string name="ok">خب</string>
+
+    <string name="label_url">...</string>
+    <string name="default_test_url">http://developer.android.com</string>
+    <string name="label_toobar_color">Toolbar Color:</string>
+    <string name="default_toolbar_color">#980e03</string>
+    <string name="label_toobar_secondary_color">Secondary Toolbar Color</string>
+
+</resources>

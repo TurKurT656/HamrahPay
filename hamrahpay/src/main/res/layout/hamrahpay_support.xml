@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/hamrahpay_background">
+
+    <Button
+        android:id="@+id/hp_faq_btn"
+        style="@style/Button.Success"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="سوالات متداول" />
+
+    <TextView
+        android:id="@+id/contact_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="اطلاعات تماس پشتیبانی نرم افزار"
+        android:layout_marginTop="10dp"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:padding="10dp"
+        android:background="@drawable/border">
+
+        <TextView
+            android:id="@+id/hp_email_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:gravity="right"
+            android:text="ایمیل : " />
+
+        <TextView
+            android:id="@+id/hp_email_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_toLeftOf="@id/hp_email_label"
+            android:autoLink="email"
+            android:text="-----" />
+
+
+        <TextView
+            android:id="@+id/hp_mobile_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/hp_email_address"
+            android:layout_centerVertical="true"
+            android:gravity="right"
+            android:text="موبایل : " />
+
+        <TextView
+            android:id="@+id/hp_mobile_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_toLeftOf="@id/hp_mobile_label"
+            android:autoLink="phone"
+            android:text="-----"
+            android:layout_below="@+id/hp_email_address" />
+
+
+
+        <TextView
+            android:id="@+id/hp_phone_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/hp_mobile_label"
+            android:layout_centerVertical="true"
+            android:gravity="right"
+            android:text="شماره تماس : " />
+
+        <TextView
+            android:id="@+id/hp_phone_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_toLeftOf="@id/hp_phone_label"
+            android:autoLink="phone"
+            android:text="-----"
+            android:layout_below="@+id/hp_mobile_label" />
+
+
+
+        <TextView
+            android:id="@+id/hp_telegram_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/hp_phone_label"
+            android:layout_centerVertical="true"
+            android:gravity="right"
+            android:text="پشنیبانی تلگرام : " />
+
+        <TextView
+            android:id="@+id/hp_telegram_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_toLeftOf="@id/hp_telegram_label"
+            android:text="-----"
+            android:layout_below="@+id/hp_phone_label" />
+
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/hp_contact_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:gravity="center"
+        android:text="اطلاعات تماس پشتیبانی پرداخت\n در صورتی که پرداخت نرم افزار خطایی رخ داده است و یا برای گزارش تخلف از اطلاعات ارتباطی زیر استفاده نمایید."
+        android:layout_marginTop="10dp"/>
+
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:padding="10dp"
+        android:background="@drawable/border">
+
+        <TextView
+            android:id="@+id/hp_support_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:gravity="right"
+            android:text="ایمیل : " />
+
+        <TextView
+            android:id="@+id/hp_support_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_toLeftOf="@id/hp_support_label"
+            android:text="support@hamrahpay.com" />
+
+
+        <TextView
+            android:id="@+id/hp_support_phone_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/hp_support_label"
+            android:layout_centerVertical="true"
+            android:gravity="right"
+            android:text="شماره تماس : " />
+
+        <TextView
+            android:id="@+id/hp_support_phone_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_toLeftOf="@id/hp_support_phone_label"
+            android:text="03537269383"
+            android:autoLink="phone"
+            android:layout_below="@+id/hp_support_address" />
+
+
+
+
+
+
+
+
+
+    </RelativeLayout>
+</LinearLayout>
