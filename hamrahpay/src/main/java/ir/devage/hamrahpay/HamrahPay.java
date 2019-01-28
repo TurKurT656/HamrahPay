@@ -433,7 +433,9 @@ public class HamrahPay {
                         params.put(SKU_TAG, sku);
                         params.put(DEVICE_ID_TAG, deviceID);
                         params.put(VERIFICATION_TYPE_TAG, getVerificationType());
-
+                        params.put(LIBRARY_VERSION, "3");
+                        params.put(LIBRARY_NAME,"ANDROID_STUDIO_JAVA");
+                        
                         try {
 
                             params.put(APPLICATION_PACKAGE_ID, dialogContext.getPackageName());
