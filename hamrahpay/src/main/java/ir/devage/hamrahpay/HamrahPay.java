@@ -1127,7 +1127,6 @@ public class HamrahPay {
         protected void onDestroy() {
             hamrahPay.verifyPayment(hamrahPay.getSku(), hamrahPay.getPayCode());
             super.onDestroy();
-            super.finish();
         }
 
         @Override
