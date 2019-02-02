@@ -1119,7 +1119,7 @@ public class HamrahPay {
                         .setNegativeButton("خیر", dialogClickListener).show();
 
             } else {
-                PayActivity.this.onDestroy();
+                PayActivity.this.finish();
             }
         }
 
