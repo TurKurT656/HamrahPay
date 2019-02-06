@@ -376,7 +376,7 @@ public class HamrahPay {
         PermissionListener permissionlistener = new PermissionListener() {
             @Override
             public void onPermissionGranted() {
-                final String deviceID = getDeviceID(context);
+                final String deviceID = (DeviceID != null) ? DeviceID : getDeviceID(context);
                 // Sending Request Via POST Method To pay_request Page
                 StringRequest request = new StringRequest(Request.Method.POST, PAY_REQUEST_PAGE,
                         new Response.Listener<String>() {
