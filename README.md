@@ -32,7 +32,7 @@ repositories {
 
 dependencies {
 	...
-	implementation 'com.github.hamrahpay:HamrahPay:3.0.3'
+	implementation 'com.github.hamrahpay:HamrahPay:3.0.4'
 }
 ```
 ---
