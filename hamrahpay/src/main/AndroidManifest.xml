@@ -5,17 +5,10 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application android:allowBackup="true" android:label="@string/app_name">
-
-        <activity
-            android:name="com.gun0912.tedpermission.TedPermissionActivity"
-            android:theme="@style/Theme.Transparent"
-            />
-        <activity
-            android:name=".HamrahPay$PayActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
 
         <activity
             android:name=".HamrahPay$HamrahpayDialogActivity"

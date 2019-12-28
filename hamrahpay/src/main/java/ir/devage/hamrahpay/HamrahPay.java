@@ -30,9 +30,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
 
-
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.MenuItem;
@@ -52,6 +49,8 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import android.widget.Toast;
+
+import androidx.browser.customtabs.CustomTabsIntent;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkError;
@@ -75,8 +74,9 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import com.google.gson.Gson;
-import com.gun0912.tedpermission.PermissionListener;
-import com.gun0912.tedpermission.TedPermission;
+import com.nabinbhandari.android.permissions.PermissionHandler;
+import com.nabinbhandari.android.permissions.Permissions;
+
 
 import java.util.ArrayList;
 
@@ -94,6 +94,8 @@ public class HamrahPay {
     private static final String SKU_TAG = "sku";
     private static final String DEVICE_ID_TAG = "device_id";
     private static final String APPLICATION_PACKAGE_ID = "package_id";
+    private static final String OS_NAME = "os_name";
+    private static final String APPLICATION_SCHEME = "application_scheme";
     private static final String EMAIL_TAG = "email";
     private static final String PAY_CODE_TAG = "pay_code";
     private static final String VERIFICATION_TYPE_TAG = "verification_type";
@@ -102,7 +104,7 @@ public class HamrahPay {
     private static final String SDK_VERSION_TAG = "sdk_version";
     private static final String ANDROID_VERSION_TAG = "android_version";
     private static final String LIBRARY_VERSION = "library_version";
-    private static final String LIBRARY_NAME    = "library_name";
+    private static final String LIBRARY_NAME = "library_name";
     // Statuses Of JSON Response From Server
     public static final String STATUS_SUCCESSFUL_PAYMENT = "SUCCESSFUL_PAYMENT";
     public static final String STATUS_NO_NETWORK_OR_SERVER = "NO_NETWORK_OR_SERVER";
@@ -124,15 +126,17 @@ public class HamrahPay {
     private int titleColor = Color.WHITE;
     private String DeviceID = null;
     private static String realDeviceID = null;
-    private static Handler PermissionHandler = null;
+    //private static Handler PermissionHandler = null;
 
     private static boolean showHamrahpayDialog = true;
-    private static boolean isChromeCustomeTabDisabled = false;
+    private static boolean isChromeCustomeTabDisabled = true;
     private String productType = null;
     LastPurchase lastPurchase = null;
     SupportInfo supportInfo = null;
     private Gson gson;
 
+
+    private String application_scheme = null;
     private ProgressDialog progressDialog;
 
     /**
@@ -148,6 +152,11 @@ public class HamrahPay {
         gson = new Gson();
     }
 
+
+    public HamrahPay setApplicationScheme(String application_scheme) {
+        this.application_scheme = application_scheme;
+        return this;
+    }
 
     public static boolean shouldShowHamrahpayDialog() {
         return showHamrahpayDialog;
@@ -336,46 +345,61 @@ public class HamrahPay {
                 .show();
     }
 
-    /**
-     * Don't Forget To Set This Permissions:<br>
-     * "android.permission.READ_PHONE_STATE"<br>
-     * "android.permission.ACCESS_WIFI_STATE"<br>
-     * In AndroidManifest.xml
-     *
-     * @return Device Unique ID
-     */
 
-    @SuppressLint("MissingPermission")
     public static String getDeviceID(final Context context) {
 
-        TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
+            String android_id = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+            realDeviceID = android_id;
+            return realDeviceID;
+        } else {
+            Permissions.check(context, Manifest.permission.READ_PHONE_STATE, null, new PermissionHandler() {
+                @SuppressLint("MissingPermission")
+                @Override
+                public void onGranted() {
+                    TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
 
-        realDeviceID = telephonyManager.getDeviceId();
-        if (realDeviceID == null) {
-            WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-            realDeviceID = wifiManager.getConnectionInfo().getMacAddress();
+                    realDeviceID = telephonyManager.getDeviceId();
+                    if (realDeviceID == null) {
+                        WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+                        realDeviceID = wifiManager.getConnectionInfo().getMacAddress();
 
-            if (realDeviceID == null) {
-                realDeviceID = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
-            }
+                        if (realDeviceID == null) {
+                            realDeviceID = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+                        }
+                    }
+                    if ("9774d56d682e549c".equals(realDeviceID) || realDeviceID == null) {
+                        realDeviceID = ((TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId();
+                    }
+                    realDeviceID = (realDeviceID != null) ? realDeviceID : "DEVICE_ID_ERROR";
+                    realDeviceID = ((realDeviceID.equals("0") || realDeviceID.isEmpty() || realDeviceID == null || realDeviceID.equals("DEVICE_ID_ERROR")) ? "DEVICE_ID_ERROR" : realDeviceID);
+                }
+
+                @Override
+                public void onDenied(Context context, ArrayList<String> deniedPermissions) {
+                    realDeviceID = "DEVICE_ID_ERROR";
+                }
+            });
+            return realDeviceID;
         }
-        if ("9774d56d682e549c".equals(realDeviceID) || realDeviceID == null) {
-            realDeviceID = ((TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId();
-        }
-        realDeviceID = (realDeviceID != null) ? realDeviceID : "DEVICE_ID_ERROR";
-        return ((realDeviceID.equals("0") || realDeviceID.isEmpty() || realDeviceID == null || realDeviceID.equals("DEVICE_ID_ERROR")) ? "DEVICE_ID_ERROR" : realDeviceID);
-
 
         //Log.e("device id method :",realDeviceID);
-
-
     }
 
     public void InitializePayment(final Context dialogContext) {
 
-        PermissionListener permissionlistener = new PermissionListener() {
+        //******************************
+        String[] permissions = {Manifest.permission.READ_PHONE_STATE};
+        String rationale = "لطفا سطح دسترسی لازم را برای ادامه به برنامه بدهید.";
+        Permissions.Options options = new Permissions.Options()
+                .setRationaleDialogTitle("دسترسی")
+                .setSettingsDialogMessage("مراجعه به تنظیمات")
+                .setSettingsText("مراجعه به تنظیمات")
+                .setSettingsDialogTitle("توجه");
+
+        Permissions.check(context, permissions, rationale, options, new PermissionHandler() {
             @Override
-            public void onPermissionGranted() {
+            public void onGranted() {
                 final String deviceID = (DeviceID != null) ? DeviceID : getDeviceID(context);
                 // Sending Request Via POST Method To pay_request Page
                 StringRequest request = new StringRequest(Request.Method.POST, PAY_REQUEST_PAGE,
@@ -390,9 +414,28 @@ public class HamrahPay {
                                         switch (status) {
                                             case STATUS_READY_TO_PAY:
                                                 // Go To Pay Activity
-                                                Intent payIntent = new Intent(context, PayActivity.class);
-                                                PayActivity.setClass(HamrahPay.this);
-                                                context.startActivity(payIntent);
+                                                //Intent payIntent = new Intent(context, PayActivity.class);
+                                                //PayActivity.setClass(HamrahPay.this);
+                                                //context.startActivity(payIntent);
+                                                String PAY_PAGE = "https://hamrahpay.com/cart/app/pay_v2/";
+                                                String url = PAY_PAGE + payCode;
+
+                                                if(!isChromeCustomeTabDisabled)
+                                                {
+                                                    CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+                                                    CustomTabsIntent customTabsIntent = builder.build();
+                                                    customTabsIntent.intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                    builder.setShowTitle(true);
+                                                    builder.setToolbarColor(context.getResources().getColor(R.color.toolbar_primary_color));
+                                                    customTabsIntent.launchUrl(context, Uri.parse(url));
+                                                }
+                                                else
+                                                {
+                                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                    context.startActivity(Intent.createChooser(intent, context.getResources().getString(R.string.select_browser)));
+                                                }
+
                                                 break;
                                             case STATUS_BEFORE_PAID:
                                                 // User Paid This Product Before, Check And Verify
@@ -434,11 +477,17 @@ public class HamrahPay {
                         params.put(DEVICE_ID_TAG, deviceID);
                         params.put(VERIFICATION_TYPE_TAG, getVerificationType());
                         params.put(LIBRARY_VERSION, "3");
-                        params.put(LIBRARY_NAME,"ANDROID_STUDIO_JAVA");
-                        
+                        params.put(LIBRARY_NAME, "ANDROID_STUDIO_JAVA");
+                        params.put(OS_NAME, "android");
+
+                        if (application_scheme != null) {
+                            params.put(APPLICATION_SCHEME, application_scheme);
+                        }
+
                         try {
 
                             params.put(APPLICATION_PACKAGE_ID, dialogContext.getPackageName());
+
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -463,25 +512,16 @@ public class HamrahPay {
                     Toast.makeText(context, "لطفا سطح دسترسی لازم را به برنامه بدهید و مجددا اقدام به پرداخت نمایید.", Toast.LENGTH_LONG).show();
                 else
                     mRequestQueue.add(request);
-
             }
 
             @Override
-            public void onPermissionDenied(ArrayList<String> deniedPermissions) {
+            public void onDenied(Context context, ArrayList<String> deniedPermissions) {
                 realDeviceID = "DEVICE_ID_ERROR";
                 Toast.makeText(context, "لطفا سطح دسترسی لازم را به برنامه بدهید.", Toast.LENGTH_LONG).show();
             }
+        });
 
-        };
-
-        new TedPermission(context)
-                .setPermissionListener(permissionlistener)
-                .setRationaleConfirmText("لطفا سطح دسترسی لازم را برای ادامه به برنامه بدهید.")
-                .setDeniedMessage("لطفا سطح دسترسی لازم را برای ادامه به برنامه بدهید.")
-                .setGotoSettingButton(true)
-                .setGotoSettingButtonText("مراجعه به تنظیمات")
-                .setPermissions(Manifest.permission.READ_PHONE_STATE)
-                .check();
+        //******************************
 
 
     }
@@ -506,7 +546,7 @@ public class HamrahPay {
         return volleyError;
     }
 
-    public void startPayment() {
+    public HamrahPay startPayment() {
 
 
         if (shouldShowHamrahpayDialog()) {
@@ -516,6 +556,7 @@ public class HamrahPay {
         } else {
             InitializePayment(context);
         }
+        return this;
 
     }
 
@@ -553,7 +594,7 @@ public class HamrahPay {
     }
 
 
-    public void getLastPurchase() {
+    public HamrahPay getLastPurchase() {
 
         StringRequest request = new StringRequest(Request.Method.POST, GET_TRANSACTION_INFO_PAGE,
                 new Response.Listener<String>() {
@@ -583,10 +624,11 @@ public class HamrahPay {
             }
         };
         mRequestQueue.add(request);
+        return this;
     }
 
 
-    public void getSupportInfo() {
+    public HamrahPay getSupportInfo() {
         StringRequest request = new StringRequest(Request.Method.POST, GET_SUPPORT_INFO_PAGE,
                 new Response.Listener<String>() {
                     @Override
@@ -615,8 +657,78 @@ public class HamrahPay {
             }
         };
         mRequestQueue.add(request);
+        return this;
     }
 
+    //----------------------------------------------------------------------------------------------
+    public void verifyPayment() {
+        // Sending Request Via POST Method To verify_payment Page
+        final String did = (DeviceID != null) ? DeviceID : getDeviceID(context);
+
+        StringRequest request = new StringRequest(Request.Method.POST, VERIFY_PAYMENT_PAGE,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject jsonResponse = new JSONObject(response);
+                            String status = jsonResponse.getString(STATUS_TAG);
+                            if (!jsonResponse.getBoolean(ERROR_TAG)) {
+                                if (status.equals(STATUS_SUCCESSFUL_PAYMENT)) {
+                                    // Payment Was Successful
+                                    makePremium(getSku());
+                                    if (listener != null) {
+                                        listener.onPaymentSucceed(getPayCode());
+                                    }
+                                }
+                            } else {
+                                // Error Occurred
+                                String message = jsonResponse.getString(MESSAGE_TAG);
+                                if (listener != null) {
+                                    listener.onErrorOccurred(status, message);
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // Error Occurred
+                String status = STATUS_NO_NETWORK_OR_SERVER;
+                String message = handleVolleyError(error);
+                if (listener != null) {
+                    listener.onErrorOccurred(status, message);
+                }
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+
+                Map<String, String> params = new HashMap<>();
+
+                String email = null;
+                email = getEmailAddress();
+                if (email != null)
+                    params.put(EMAIL_TAG, email);
+
+                params.put(SKU_TAG, sku);
+                params.put(PAY_CODE_TAG, payCode);
+                params.put(VERIFICATION_TYPE_TAG, getVerificationType());
+                params.put(DEVICE_ID_TAG, did);
+                params.put(DEVICE_MODEL_TAG, Build.MODEL);
+                params.put(DEVICE_MANUFACTURER_TAG, Build.MANUFACTURER);
+                params.put(SDK_VERSION_TAG, Integer.toString(Build.VERSION.SDK_INT));
+                params.put(ANDROID_VERSION_TAG, Build.VERSION.RELEASE);
+                params.put(LIBRARY_VERSION, "3");
+                params.put(LIBRARY_NAME, "ANDROID_STUDIO_JAVA");
+                return params;
+            }
+        };
+        mRequestQueue.add(request);
+    }
+    //----------------------------------------------------------------------------------------------
     private void verifyPayment(final String sku, final String payCode) {
 
         // Sending Request Via POST Method To verify_payment Page
@@ -679,7 +791,7 @@ public class HamrahPay {
                 params.put(SDK_VERSION_TAG, Integer.toString(Build.VERSION.SDK_INT));
                 params.put(ANDROID_VERSION_TAG, Build.VERSION.RELEASE);
                 params.put(LIBRARY_VERSION, "3");
-                params.put(LIBRARY_NAME,"ANDROID_STUDIO_JAVA");
+                params.put(LIBRARY_NAME, "ANDROID_STUDIO_JAVA");
                 return params;
             }
         };
@@ -867,277 +979,4 @@ public class HamrahPay {
 
     }
 
-    //==================================================================
-    //                   Pay Activity As Inner Class                  //
-    //==================================================================
-    public static class PayActivity extends Activity {
-
-        // Pay Page
-        String PAY_PAGE = "https://hamrahpay.com/cart/app/pay_v2/";
-
-        ProgressDialog progress;
-        ProgressBar webview_progressBar;
-        WebView wbvwBrowser;
-        TextView urlBar;
-        TextView urlTitleBar;
-        TextView txtProtocol;
-        View devider;
-        static HamrahPay hamrahPay;
-
-        String certificate_info = "";
-        String currentUrl = "";
-
-        //  Gets Properties From Outer Class
-        private static void setClass(HamrahPay createdHamarahPay) {
-            hamrahPay = createdHamarahPay;
-        }
-
-
-        Context context;
-
-        @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_pay);
-
-            String payURL = PAY_PAGE + hamrahPay.getPayCode();
-            if (false/*!isChromeCustomeTabDisabled*/) {
-
-            } else {
-
-
-                // Initializing Url View
-                urlBar = (TextView) findViewById(R.id.txt_url);
-                urlTitleBar = (TextView) findViewById(R.id.txt_url_title);
-                txtProtocol = (TextView) findViewById(R.id.txt_protocol);
-                webview_progressBar = (ProgressBar) findViewById(R.id.webview_progressBar);
-                devider = (View) findViewById(R.id.divider);
-
-                txtProtocol.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (txtProtocol.getText().toString().startsWith("https"))
-                            Toast.makeText(PayActivity.this, certificate_info, Toast.LENGTH_LONG).show();
-                        else
-                            Toast.makeText(PayActivity.this, getString(R.string.security_alert), Toast.LENGTH_LONG).show();
-                    }
-                });
-
-                urlBar.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        try {
-                            AlertDialog.Builder builder;
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                builder = new AlertDialog.Builder(PayActivity.this, android.R.style.Theme_Material_Dialog_Alert);
-                            } else {
-                                builder = new AlertDialog.Builder(PayActivity.this);
-                            }
-                            builder.setTitle("اطلاعات صفحه")
-                                    .setMessage("آدرس صفحه \n" + currentUrl + "\nاطلاعات SSL\n" + certificate_info)
-                                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            // continue with delete
-                                        }
-                                    })
-                                    .setIcon(R.drawable.more_vector)
-                                    .show();
-                        } catch (Exception e) {
-
-                        }
-
-                    }
-                });
-                // Injecting And Initializing WebView
-                //String payURL = PAY_PAGE + hamrahPay.getPayCode();
-                wbvwBrowser = (WebView) findViewById(R.id.wbvw_acPay);
-                wbvwBrowser.clearCache(true);
-                startWebView(payURL);
-            }
-
-
-        }
-
-        private void changeUrl(String url) {
-            boolean isHttps = url.startsWith("https://");
-
-            String urlWithoutProtocol = url.replace("https", "").replace("http", "");
-            urlBar.setText(urlWithoutProtocol);
-            if (isHttps) {
-                txtProtocol.setText("https");
-                txtProtocol.setTextColor(Color.parseColor("#4ada3b"));
-                txtProtocol.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_https, 0, 0, 0);
-            } else {
-                txtProtocol.setText("http");
-                txtProtocol.setTextColor(Color.parseColor("#1AFFFFFF"));
-                txtProtocol.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_http, 0, 0, 0);
-            }
-        }
-
-        @Override
-        protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-            super.onActivityResult(requestCode, resultCode, data);
-            this.onDestroy();
-        }
-
-        @SuppressLint("SetJavaScriptEnabled")
-        private void startWebView(final String payURL) {
-
-            wbvwBrowser.setWebChromeClient(new WebChromeClient() {
-                @Override
-                public void onProgressChanged(WebView view, int newProgress) {
-                    super.onProgressChanged(view, newProgress);
-                    if (newProgress < 100) {
-                        devider.setVisibility(View.GONE);
-                        webview_progressBar.setVisibility(View.VISIBLE);
-                        webview_progressBar.setProgress(newProgress);
-                    } else {
-                        webview_progressBar.setVisibility(View.GONE);
-                        devider.setVisibility(View.VISIBLE);
-                    }
-
-                }
-            });
-
-            wbvwBrowser.setWebViewClient(new WebViewClient() {
-
-                @Override
-                public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                    //progress.show();
-                    changeUrl(url);
-
-                    super.onPageStarted(view, url, favicon);
-                }
-
-                @TargetApi(Build.VERSION_CODES.N)
-                @Override
-                public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                    final Uri uri = request.getUrl();
-
-
-                    changeUrl(uri.toString());
-                    if (uri.toString().contains("exit_page")) {
-                        onBackPressed();
-                        return true;
-                    }
-                    view.loadUrl(uri.toString());
-                    //urlBar.setText(uri.toString());
-                    urlTitleBar.setText(view.getTitle());
-                    currentUrl = uri.toString();
-                    return super.shouldOverrideUrlLoading(view, request);
-                }
-
-                @Override
-                public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                    if (url.contains("exit_page")) {
-                        onBackPressed();
-                        return true;
-                    }
-                    view.loadUrl(url);
-                    //urlBar.setText(url);
-                    changeUrl(url);
-                    urlTitleBar.setText(view.getTitle());
-                    currentUrl = url;
-                    return super.shouldOverrideUrlLoading(view, url);
-                }
-
-                @TargetApi(Build.VERSION_CODES.M)
-                @Override
-                public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-                    if (error.getErrorCode() == -2) {
-                        String errorMessage = "<html><head><meta charset=\"utf-8\" /><style>body{font-family:tahoma;font-size:13px;directin:rtl;text-align:right}</style></head><body><div style=\"color: #a94442;background-color: #f2dede;border-color: #ebccd1;margin:5px; padding:8px\">متاسفانه اشکالی در ارتباط با بانک به وجود آمده است . لطفا دقایقی دیگر مجددا تلاش بفرمایید.</div></body></html>";
-                        view.loadData(errorMessage, "text/html", "utf-8");
-                        return;
-                    }
-                    super.onReceivedError(view, request, error);
-                }
-
-                @SuppressWarnings("deprecation")
-                @Override
-                public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-                    if (errorCode == -2) {
-                        String errorMessage = "<html><head><meta charset=\"utf-8\" /><style>body{font-family:tahoma;font-size:13px;directin:rtl;text-align:right}</style></head><body><div style=\"color: #a94442;background-color: #f2dede;border-color: #ebccd1;margin:5px; padding:8px\">متاسفانه اشکالی در ارتباط با بانک به وجود آمده است . لطفا دقایقی دیگر مجددا تلاش بفرمایید.</div></body></html>";
-                        view.loadData(errorMessage, "text/html", "utf-8");
-                        return;
-                    }
-                    super.onReceivedError(view, errorCode, description, failingUrl);
-                }
-
-                @Override
-                public void onPageFinished(WebView view, String url) {
-                    //if (progress.isShowing()) {
-                    //    progress.dismiss();
-                    //}
-                    //urlBar.setText(url);
-                    changeUrl(url);
-                    urlTitleBar.setText(view.getTitle());
-                    currentUrl = url;
-                    super.onPageFinished(view, url);
-                    wbvwBrowser.setVisibility(View.GONE);
-                    wbvwBrowser.setVisibility(View.VISIBLE);
-                    try {
-                        if (android.os.Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT_WATCH) {
-                            certificate_info = getString(R.string.hamrahpay_secure);
-                        } else {
-                            certificate_info = view.getCertificate().toString();
-                        }
-                    } catch (NullPointerException e) {
-                        certificate_info = getString(R.string.hamrahpay_secure);
-                    } catch (Exception e) {
-                        certificate_info = getString(R.string.hamrahpay_secure);
-                    }
-                }
-            });
-
-            // Do not disable this line , because it used when user will redirect to bank
-            wbvwBrowser.getSettings().setDomStorageEnabled(true);
-            wbvwBrowser.getSettings().setJavaScriptEnabled(true);
-            wbvwBrowser.getSettings().setDefaultTextEncodingName("utf-8");
-            wbvwBrowser.loadUrl(payURL);
-        }
-
-        @Override
-        public void onBackPressed() {
-            if (currentUrl.contains("shaparak.ir")) {
-                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which) {
-                            case DialogInterface.BUTTON_POSITIVE:
-                                PayActivity.this.finish();
-                                break;
-
-                            case DialogInterface.BUTTON_NEGATIVE:
-                                //No button clicked
-                                break;
-                        }
-                    }
-                };
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(PayActivity.this);
-                builder.setMessage(getString(R.string.shaparak_alert)).setPositiveButton("بله", dialogClickListener)
-                        .setNegativeButton("خیر", dialogClickListener).show();
-
-            } else {
-                PayActivity.this.finish();
-            }
-        }
-
-        @Override
-        protected void onDestroy() {
-            hamrahPay.verifyPayment(hamrahPay.getSku(), hamrahPay.getPayCode());
-            super.onDestroy();
-        }
-
-        @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            int id = item.getItemId();
-            switch (id) {
-                case android.R.id.home:
-                    finish();
-                    break;
-            }
-            return super.onOptionsItemSelected(item);
-        }
-    }
 }

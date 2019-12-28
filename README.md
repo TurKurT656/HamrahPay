@@ -2,7 +2,7 @@
 [![Release](https://jitpack.io/v/turkurt656/hamrahpay.svg)](https://jitpack.io/#turkurt656/hamrahpay)
 [![GitHub license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/TurKurT656/HamrahPay/blob/master/LICENSE.md)
 
-<b><i>کتابخانه مخصوص اندروید استودیو</i></b>
+<b><i>کتابخانه اندروید استودیو - پرداخت در مرورگر</i></b>
 <br>
 <br>
 <br>
@@ -20,33 +20,85 @@
 
 
 ## نحوه اضافه کردن کتابخانه
-برای استفاده از این کتابخانه، ابتدا کدهای این بخش را در فایل زیر بنویسید:<br>
-`build.gradle`<br>
-نکته: دقت کنید که دو فایل از فایل بالایی در پروژه موجود هست و شما باید کدها را در فایل موجود در زیرشاخه ی برنامه بنویسید
+<p dir='rtl' align='right'>
+برای استفاده از این کتابخانه، ابتدا کدهای زیر را در فایل build.gradle وارید نموده و پروژه را sync کنید:<br>
+</p>
 
 ```gradle
 repositories {
-	...
 	maven { url "https://jitpack.io" }
 }
 
 dependencies {
-	...
-	implementation 'com.github.hamrahpay:HamrahPay:3.0.4'
+	implementation 'com.github.hamrahpay:HamrahPay:3.0.5'
 }
 ```
 ---
 
 ## نحوه استفاده از کتابخانه
-کافیست کد زیر را در اکتیویتی یا سرویس مورد نظرتان اضافه کنید:<br>
-بعنوان مثال در رویداد کلیک دکمه پرداخت
+<p dir='rtl' align='right'>
+ابتدا یک اکتیویتی ساخته و یک دکمه در آن اضاقه نمایید . به عنوان مثال ما MainActivity.java را در نظر میگیریم
+</p>
+<p dir='rtl' align='right'>
+سپس در فایل AndroidManifest.xml اصلی پروژه کد های زیر را به بلاک اکتیوتی مورد نظر اضافه میکنیم
+<p>
 
-### کد ساده
-فقط با اضافه کردن این دستورات، میتوانید برنامه خود را اجرا کنید
+```xml
+<intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="hamrahpay" android:host="your_app_unique_id"/>
+</intent-filter>
+```
+
+**your_app_unique_id**
+<p dir='rtl' align='right'>
+را با یک عبارت دلخواه و کاملا یکتا جایگزین کنید.
+در نظر داشته باشید که فقط و فقط میتوانید از حروف انگلیسی، اعداد و خط فاصله استفاده نمایید و استفاده از کارکترهایی مانند فاصله و علائم دیگر مجاز نیست. این عبارت باید برای هر یک از برنامه های شما به صورت یکتا باشد تا در روند پرداخت آن مشکلی ایجاد نشود.
+</p>
+
+<p dir='rtl' align='right'>
+به عنوان مثال برای اکتیویتی MainActivity.java به شکل زیر میشود
+</p>
+
+```xml
+<activity android:name=".MainActivity"
+            android:launchMode="singleInstance">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.VIEW"/>
+            </intent-filter>
+            
+            <!--Hamrahpay-->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="hamrahpay" android:host="your_app_unique_id"/>
+            </intent-filter>
+</activity>
+```
+<p dir='rtl' align='right'>
+در فایل اکتیویتی مورد نظر ابتدا یک آبجکت از همراه پی میسازیم
+</p>
+
 ```java
-final String yourSKU = "hp_596c483885551620831476";   // شناسه کالای شما در سایت همراه پی
-        new HamrahPay(MainActivity.this)                // اکتیویتی که می خواهید از آنجا پرداخت انجام شود
+private HamrahPay hp=null;
+```
+
+<p dir='rtl' align='right'>
+سپس در کد دکمه ی پرداخت کدهای زیر را اضافه میکنیم
+</p>
+
+```java
+//------- Start ------
+        final String yourSKU = "hp_596c483885551620831476";   // شناسه کالای شما در سایت همراه پی
+        hp = new HamrahPay(MainActivity.this)                // اکتیویتی که می خواهید از آنجا پرداخت انجام شود
                 .sku(yourSKU)                               // اضافه کردن شناسه به صفحه پرداخت
+                .setApplicationScheme("your_app_unique_id") // باید با مقدار دلخواه خود جایگزین نمایید.
+                //.enableChromeCustomeTab()
                 .listener(new HamrahPay.Listener() {        // لیسنر برای آگاهی شما از موفق بودن یا نبودن پرداخت
                     @Override
                     public void onErrorOccurred(String status, String message) {
@@ -58,6 +110,7 @@ final String yourSKU = "hp_596c483885551620831476";   // شناسه کالای �
                     @Override
                     public void onPaymentSucceed(String payCode) {
                         // کاربر با موفقیت پرداخت را انجام داده است
+                        Toast.makeText(MainActivity.this,"پرداخت موفقیت آمیز بوده است",Toast.LENGTH_SHORT).show();
                         Log.i("HamrahPay", "payCode: " + payCode);
                     }
 
@@ -78,15 +131,116 @@ final String yourSKU = "hp_596c483885551620831476";   // شناسه کالای �
                 })
                 .setShouldShowHamrahpayDialog(false)
                 .startPayment(); // شروع عملیات پرداخت
+// ------ end ---------------
 ```
+<p dir='rtl' align='right'>
+در نهایت متد زیر را به اکتیویتی اضافه میکنیم
+</p>
 
-### ذخیره خرید و چک کردن آن
-با استفاده از کد زیر میتوان چک کرد که آیا کاربر محصول مورد نظر را خریداری کرده است یا خیر:
 ```java
-if (HamrahPay.isPremium(MainActivity.this,yourSKU)) {        // چک کردن خرید با ورودی شناسه کالا
-    payButton.setEnabled(false);                             // غیر فعال کردن دکمه خرید اگر پرداخت انجام شده باشد
+@Override
+protected void onNewIntent(Intent intent) {
+    super.onNewIntent(intent);
+    if(intent.getScheme().equals("hamrahpay"))
+    {
+        hp.verifyPayment();
+    }
 }
 ```
+
+<p dir='rtl' align='right'>
+کدهای نهایی برای درک بهتر 
+</p>
+
+```java
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
+
+import ir.devage.hamrahpay.HamrahPay;
+import ir.devage.hamrahpay.LastPurchase;
+import ir.devage.hamrahpay.SupportInfo;
+
+public class MainActivity extends AppCompatActivity {
+
+    private HamrahPay hp=null;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        //------- Start ------
+        final String yourSKU = "hp_596c483885551620831476";   // شناسه کالای شما در سایت همراه پی
+        hp= new HamrahPay(MainActivity.this)                // اکتیویتی که می خواهید از آنجا پرداخت انجام شود
+                .sku(yourSKU)                               // اضافه کردن شناسه به صفحه پرداخت
+                .setApplicationScheme("your_app_unique_id") // باید با مقدار دلخواه خود جایگزین نمایید.
+                //.enableChromeCustomeTab()
+                .listener(new HamrahPay.Listener() {        // لیسنر برای آگاهی شما از موفق بودن یا نبودن پرداخت
+                    @Override
+                    public void onErrorOccurred(String status, String message) {
+                        // مشکلی در پرداخت روی داده است یا کاربر پرداخت را انجام نداده است
+                        Toast.makeText(MainActivity.this,message,Toast.LENGTH_SHORT).show();
+                        Log.e("HamrahPay", status + ": " + message);
+                    }
+
+                    @Override
+                    public void onPaymentSucceed(String payCode) {
+                        // کاربر با موفقیت پرداخت را انجام داده است
+                        Toast.makeText(MainActivity.this,"پرداخت موفقیت آمیز بوده است",Toast.LENGTH_SHORT).show();
+                        Log.i("HamrahPay", "payCode: " + payCode);
+                    }
+
+                    @Override
+                    public void onGetLastPurchaseInfo(LastPurchase lastPurchase) {
+
+                    }
+
+                    @Override
+                    public void onGetSupportInfo(SupportInfo supportInfo) {
+
+                    }
+
+                    @Override
+                    public void onGetDeviceID(String deviceID) {
+
+                    }
+                })
+                .setShouldShowHamrahpayDialog(false)
+                .startPayment(); // شروع عملیات پرداخت
+        // ------ end ---------------
+    }
+
+    //----------------------------------------------------------------------------------------------
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if(intent.getScheme().equals("hamrahpay"))
+        {
+            hp.verifyPayment();
+        }
+    }
+    //----------------------------------------------------------------------------------------------
+}
+
+```
+
+## توضیحات تکمیلی کد
+<p dir='rtl' align='right'>1- yourSKU  را با شناسه کالای خود جایگزین نمایید</p>
+<p dir='rtl' align='right'>2- your_app_unique_id را همانند شناسه ای وارد نمایید که در AndroidManifest.xml وارد کرده اید.  در صورتی که این مقدار مانند مقدار بالا نباشد و یا در برنامه های شما تکراری باشد عملیات پرداخت موفق نخواهد بود. (این مقدار باید در هر برنامه یکتا باشد)
+<p dir='rtl' align='right'>3- در صورتی که میخواهید صفحه ی پرداخت در Chrome Custom tabs نمایش داده شود متد enableChromeCustomeTab() را فعال نمایید </p>
+<p dir='rtl' align='right'>4- متد onPaymentSucceed زمانی فراخوانی میشود که عملیات پرداخت موفقیت آمیز بوده است و شما میتوانید کدهای خود را در این متد بنویسید
+</p>
+<p dir='rtl' align='right'>5- متد onErrorOccurred زمانی فراخوانی میشود که پرداخت به هر دلیلی موفقیت آمیز نبوده است
+</p>
+<p dir='rtl' align='right'>6- متد onGetLastPurchaseInfo زمانی فراخوانی میشود که شما درخواست دریافت اطلاعات آخرین پرداخت یک شناسه کالا  با استفاده از متد getLastPurchase()  داده باشید (مورد استفاده برای پرداخت های اشتراکی )
+</p>
+
+### متدهای کمکی
+
 
 ### پیکربندی نوع پرداخت
 دو نوع پرداخت در همراه پی پشتیبانی میگردد:
@@ -97,15 +251,23 @@ if (HamrahPay.isPremium(MainActivity.this,yourSKU)) {        // چک کردن خ
 
 برای اینکار به کد ساده کد زیر را اضافه کنید:
 ```java
-.verificationType(HamrahPay.DEVICE_VERIFICATION)    // حالت اول
-.verificationType(HamrahPay.EMAIL_VERIFICATION)     // حالت دوم - حالت پیشفرض
+.verificationType(HamrahPay.DEVICE_VERIFICATION)    // حالت اول  - (روش پیشنهادی)
+.verificationType(HamrahPay.EMAIL_VERIFICATION)     // حالت دوم - حالت ایمیل
+```
+### فعال کردن ChromeCustomTabs به جای Browser
+```java
+.enableChromeCustomeTab()
 ```
 
 ### تغییر کد دستگاه به کد یکتا دلخواه
 ```java
 .setCustomDeviceID(String deviceID) // در پارامتر آن کد دلخواه خود را وارد نمایید.
 ```
-### چک کردن وضعیت پرداخت محصولات خریدنی
+### چک کردن وضعیت پرداخت محصولات خریدنی . 
+<p dir='rtl' align='right'>
+مقدار بازگشتی از نوع Boolean است
+</p>
+
 ```java
 // context : Context
 // sku : شناسه محصول
@@ -127,7 +289,7 @@ hamrahPay.getScore(sku,this); // دریافت میزان امتیاز / سکه /
 این متد زمانی کارایی دارد که محصولات شما نیازمند اشتراک زمانی هستند و با دادن مشخصات کالا اطلاعات آخرین پرداخت مشتری را برمیگرداند که شامل تاریخ آخرین خرید ، تاریخ روز ، شماره رسید پرداخت و غیره میباشد
 ```java
 final String yourSKU = "hp_596c483885551620831476";   // شناسه کالای شما در سایت همراه پی
-        new HamrahPay(MainActivity.this)                // اکتیویتی که می خواهید از آنجا پرداخت انجام شود
+      hp =  new HamrahPay(MainActivity.this)                // اکتیویتی که می خواهید از آنجا پرداخت انجام شود
                 .sku(yourSKU)                               // اضافه کردن شناسه به صفحه پرداخت
                 .listener(new HamrahPay.Listener() {        // لیسنر برای آگاهی شما از موفق بودن یا نبودن پرداخت
                     @Override
@@ -242,8 +404,12 @@ new HamrahPay(MainActivity.this)
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
-## توسعه دهندگان
+
+توسعه دهندگان
+
+تیم همراه پی
+
 آقای سامان ستاری ملکی
 ایمیل :  turkurt656@gmail.com
 
-تیم همراه پی
+

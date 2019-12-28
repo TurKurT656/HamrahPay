@@ -2,6 +2,7 @@
     <string name="app_name">HamrahPay</string>
     <string name="pay">پرداخت</string>
     <string name="pleaseWait">لطفا چند لحظه صبر نمایید...</string>
+    <string name="select_browser">یک مرورگر برای پرداخت انتخاب نمایید. (پیشنها ما Chrome)</string>
     <string name="hamrahpay_faq">https://hamrahpay.com/help/faq</string>
     <string name="tedpermission_setting">تنظیمات</string>
     <string name="tedpermission_close">خروج</string>
